@@ -43,11 +43,18 @@ const AddCandidate = () => {
       const canvas = canvasRef.current;
       const video = videoRef.current;
       const ctx = canvas.getContext("2d");
+
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
+
+      // Mirror the image before drawing
+      ctx.translate(canvas.width, 0);
+      ctx.scale(-1, 1);
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
       const imageData = canvas.toDataURL("image/png");
       setCandidate({ ...candidate, image: imageData });
+
       setCapturing(false);
       if (video.srcObject) {
         video.srcObject.getTracks().forEach((track) => track.stop());
@@ -67,7 +74,8 @@ const AddCandidate = () => {
           
           {capturing ? (
             <div className="flex flex-col items-center">
-              <video ref={videoRef} autoPlay className="w-64 h-48 border-2 border-gray-600 rounded-lg" />
+              {/* Mirrored Video Feed */}
+              <video ref={videoRef} autoPlay className="w-64 h-48 border-2 border-gray-600 rounded-lg transform scale-x-[-1]" />
               <button type="button" onClick={captureImage} className="mt-2 bg-green-600 text-white px-4 py-2 rounded-md">Capture Image</button>
             </div>
           ) : (
